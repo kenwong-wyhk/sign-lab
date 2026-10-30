@@ -8,9 +8,10 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='15' fill='%2316202B'/><text x='32' y='46' font-size='40' text-anchor='middle' fill='%23FFF8EA' font-family='Georgia'>±</text></svg>" />
 <style>
 /* Hallmark · shape: the lab panel, kept · genre: editorial · theme: Quarters (by request) · job: try · redesign: restyle
- * paper: oklch(97.4% 0.006 250) · accent: oklch(55.3% 0.226 28) · display: EB Garamond · body: Archivo Narrow · hero: the existing split kept; the slip becomes a square card under a blue rule · nav: tabs with a blue underline on the active one · footer: one hairline over two lines · imagery: none, the zero-pair tiles are the picture · signature: the tiles in the school's blue and red, replacing the red and green
+ * paper: oklch(97.4% 0.006 250) · accent: oklch(55.3% 0.226 28) · display: EB Garamond · body: Archivo Narrow · maths: STIX Two Text, the third face, one role · hero: the existing split kept; the slip becomes a square card under a blue rule · nav: tabs with a blue underline on the active one · footer: one hairline over two lines · imagery: none, the zero-pair tiles are the picture · signature: the tiles in the school's blue and red, replacing the red and green
  * axes: light/roman-serif/warm · posture: full-palette · contrast: pass · fold: pass · v2.0.0 */
 /* Hallmark · waive 24b · the off-scale values are the original layout's own, untouched by this run · a restyle keeps the lab's rhythm */
+/* Hallmark · waive 37 · the fourth family is the Traditional Chinese face the glosses need, not a voice · EB Garamond sets the page, Archivo Narrow the labels, STIX Two Text the mathematics, and the CJK stack only carries 有向數 and 同類項 */
 /* Hallmark · dismissed 49 · the label holds one line at 375, measured at 231px in a 375px screen · a verb phrase that cannot shorten without losing the lab's name */
 /* Hallmark · waive 59 · the section gaps are the original layout's own, untouched by this run · a restyle does not re-space the lab */
 /* Hallmark · dropped homeAcc · 69 names the echo, the HUD prints accuracy on the same screen */
@@ -74,10 +75,13 @@
 
   --font-ui:"Archivo Narrow","Arial Narrow",ui-sans-serif,sans-serif;
   --font-math:"EB Garamond",Georgia,"Times New Roman",serif;
+  --font-expr:"STIX Two Text","Times New Roman",serif;
   --font-zh:"PingFang HK","PingFang TC","Hiragino Sans CNS","Microsoft JhengHei","Noto Sans CJK TC","Noto Sans TC",sans-serif;
 }
 @font-face{font-family:"EB Garamond";src:url("assets/fonts/eb-garamond.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"EB Garamond";src:url("assets/fonts/eb-garamond-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"STIX Two Text";src:url("assets/fonts/stix-two-text.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"STIX Two Text";src:url("assets/fonts/stix-two-text-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
 @font-face{font-family:"Archivo Narrow";src:url("assets/fonts/archivo-narrow.woff2") format("woff2");font-weight:400 700;font-style:normal;font-display:swap}
 @font-face{font-family:"Archivo Narrow";src:url("assets/fonts/archivo-narrow-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
 /* A variable is set in italic; the numerals and the operators stay roman. */
@@ -200,12 +204,12 @@ h1 em{font-style:normal}
   padding:28px 26px 24px;border-top:2px solid var(--color-field);
 }
 .slip-title{font-size:13px;letter-spacing:0;color:var(--color-ink-3);font-weight:400}
-.slip-expr{font-family:var(--font-math);font-size:clamp(26px,3vw,33px);margin:12px 0 18px;letter-spacing:0}
+.slip-expr{font-family:var(--font-expr);font-size:clamp(26px,3vw,33px);margin:12px 0 18px;letter-spacing:0}
 .slip-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--color-rule)}
 .slip-row .mark{width:22px;height:22px;border-radius:0;display:grid;place-items:center;font-size:13px;font-weight:400;flex-shrink:0;font-family:var(--font-math)}
 .slip-row.bad .mark{background:var(--color-paper-3);color:var(--color-ink)}
 .slip-row.good .mark{background:var(--color-paper-2);color:var(--color-ink)}
-.slip-row .mono{font-family:var(--font-math);font-size:21px;min-width:96px}
+.slip-row .mono{font-family:var(--font-expr);font-size:21px;min-width:96px}
 .slip-row.bad .mono{color:var(--color-ink-2);text-decoration:line-through;text-decoration-thickness:1px}
 .slip-row.good .mono{color:var(--color-ink)}
 .slip-row .note{font-size:13px;color:var(--color-ink-3);line-height:1.35}
@@ -256,16 +260,16 @@ h1 em{font-style:normal}
   font-family:var(--font-math);font-size:12px;display:grid;place-items:center;
 }
 .rules b{color:var(--ink);font-weight:400}
-.rules .k{font-family:var(--font-math);font-size:14px;color:var(--ink);white-space:nowrap}
+.rules .k{font-family:var(--font-expr);font-size:14px;color:var(--ink);white-space:nowrap}
 
-.demo-expr{font-family:var(--font-math);font-size:17px;color:var(--ink);margin-bottom:9px}
+.demo-expr{font-family:var(--font-expr);font-size:17px;color:var(--ink);margin-bottom:9px}
 .mini-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px}
 .mini-grp{display:flex;gap:2px;flex-wrap:wrap}
 .sq{width:11px;height:11px;border-radius:0;border:1px solid;display:block}
 .sq.red{background:var(--tint-neg);border-color:var(--color-accent)}
 .sq.green{background:var(--tint-pos);border-color:var(--color-field)}
 .demo-note{font-size:13px;color:var(--color-ink-3);margin:0 0 7px}
-.demo-eq{font-family:var(--font-math);font-size:16px;color:var(--ink-2)}
+.demo-eq{font-family:var(--font-expr);font-size:16px;color:var(--ink-2)}
 .demo-eq b{font-size:21px;color:var(--ink);font-weight:400}
 
 .rule h2{margin:0 0 10px;font-family:var(--font-math);font-size:18px;font-weight:400;letter-spacing:0}
@@ -275,13 +279,13 @@ h1 em{font-style:normal}
 .rule li.on{color:var(--ink)}
 .rule li.on::before{background:var(--color-field)}
 .rule b{color:var(--ink);font-weight:400}
-.rule .k{font-family:var(--font-math);font-size:15px}
+.rule .k{font-family:var(--font-expr);font-size:15px}
 
 /* ============================================================
    5. expression + zero-pair tiles
    ============================================================ */
 .expr{
-  font-family:var(--font-math);
+  font-family:var(--font-expr);
   font-size:clamp(28px,3.7vw,38px);
   line-height:1.3;letter-spacing:0;
   display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.34em;
@@ -308,7 +312,7 @@ h1 em{font-style:normal}
 
 .tile-box{position:relative;background:var(--color-paper-2);border:1px solid var(--line);border-radius:0;padding:8px 10px 0;margin-top:0}
 .tile-legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:0 2px 6px}
-.lg{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-math);font-size:14px;color:var(--ink-2)}
+.lg{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-expr);font-size:14px;color:var(--ink-2)}
 .sw{width:16px;height:16px;border-radius:0;border:1.5px solid;display:inline-block;flex-shrink:0}
 .sw.red{background:var(--tint-neg);border-color:var(--color-accent)}
 .sw.green{background:var(--tint-pos);border-color:var(--color-field)}
@@ -317,7 +321,7 @@ h1 em{font-style:normal}
 .tile-stage{position:relative;width:100%;min-height:96px}
 .tile{
   position:absolute;left:0;top:0;display:grid;place-items:center;
-  font-family:var(--font-math);font-weight:400;line-height:1;
+  font-family:var(--font-expr);font-weight:400;line-height:1;
   border-radius:0;border:1.5px solid;
   transition:transform .5s cubic-bezier(.22,.78,.25,1),opacity .3s ease,
              background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .3s ease;
@@ -327,11 +331,11 @@ h1 em{font-style:normal}
 .tile.pairing{box-shadow:0 0 0 2px var(--color-ink);z-index:3}
 .tile.gone{opacity:0}
 .tile-op{
-  position:absolute;width:18px;text-align:center;font-family:var(--font-math);font-size:20px;
+  position:absolute;width:18px;text-align:center;font-family:var(--font-expr);font-size:20px;
   line-height:1;color:var(--color-ink-3);transition:opacity .35s ease;pointer-events:none;
 }
 .zero-pop{
-  position:absolute;font-family:var(--font-math);font-size:14px;color:var(--color-ink-3);
+  position:absolute;font-family:var(--font-expr);font-size:14px;color:var(--color-ink-3);
   pointer-events:none;animation:zeroPop .66s ease forwards;
 }
 @keyframes zeroPop{0%{opacity:0;transform:scale(.55)}30%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.3)}}
@@ -341,7 +345,7 @@ h1 em{font-style:normal}
   flex:1;font-size:14px;color:var(--ink-2);line-height:1.6;
   padding:8px 0;
 }
-.tile-cap b{font-family:var(--font-math);font-size:16px;color:var(--ink);font-weight:400}
+.tile-cap b{font-family:var(--font-expr);font-size:16px;color:var(--ink);font-weight:400}
 .tile-play{
   flex-shrink:0;font-size:14px;font-weight:400;color:var(--ink-2);background:var(--card);
   border:1px solid var(--line-2);border-radius:0;padding:7px 14px;cursor:pointer;
@@ -355,7 +359,7 @@ h1 em{font-style:normal}
    ============================================================ */
 .options{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
 .opt{
-  font-family:var(--font-math);font-size:25px;line-height:1.2;
+  font-family:var(--font-expr);font-size:25px;line-height:1.2;
   padding:12px 12px;border-radius:0;border:1px solid var(--line-2);
   background:var(--card);color:var(--ink);cursor:pointer;
   transition:border-color .16s ease,background-color .16s ease,color .16s ease;
@@ -394,7 +398,7 @@ h1 em{font-style:normal}
 .chips-done{font-size:14px;color:var(--color-ink-3);letter-spacing:0}
 .chips.done{display:none}
 .chip{
-  font-family:var(--font-math);font-size:27px;line-height:1;padding:10px 15px 11px;
+  font-family:var(--font-expr);font-size:27px;line-height:1;padding:10px 15px 11px;
   border-radius:0;border:1px solid var(--line-2);background:var(--card);color:var(--ink);
   cursor:pointer;display:inline-flex;align-items:baseline;
   transition:transform .15s ease,border-color .15s ease,background-color .15s ease;user-select:none;
@@ -430,11 +434,11 @@ h1 em{font-style:normal}
 .sol-h{font-size:13px;letter-spacing:0;color:var(--color-ink-3);font-weight:400;margin-bottom:10px}
 .sol-row{display:flex;align-items:baseline;gap:9px;font-size:15px;padding:4px 0;flex-wrap:wrap}
 .sol-k{color:var(--ink-2);min-width:86px}
-.sol-e{font-family:var(--font-math);font-size:17px;color:var(--ink)}
+.sol-e{font-family:var(--font-expr);font-size:17px;color:var(--ink)}
 .sol-e b{color:var(--ink);font-weight:400}
 .sol-final{
   margin-top:10px;padding-top:10px;border-top:1px solid var(--color-rule-2);
-  font-family:var(--font-math);font-size:21px;color:var(--ink);
+  font-family:var(--font-expr);font-size:21px;color:var(--ink);
 }
 .sol-final b{color:var(--color-ink);font-weight:400}
 
@@ -472,7 +476,7 @@ h1 em{font-style:normal}
   padding:4px 10px;border-radius:0;margin-bottom:2px;
 }
 .ch-q{
-  font-family:var(--font-math);font-size:clamp(28px,3.6vw,38px);text-align:center;
+  font-family:var(--font-expr);font-size:clamp(28px,3.6vw,38px);text-align:center;
   padding:26px 8px 6px;line-height:1.35;min-height:96px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.3em;
 }
 .ch-sub{text-align:center;font-size:13px;color:var(--color-ink-3);letter-spacing:0;margin-bottom:-4px}
@@ -495,7 +499,7 @@ h1 em{font-style:normal}
 .skill:last-child{border-bottom:0}
 .skill-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .skill-name{font-size:15px;font-weight:400}
-.skill-name em{font-style:normal;font-family:var(--font-math);font-size:14px;color:var(--color-ink-3);margin-left:7px;font-weight:400}
+.skill-name em{font-style:normal;font-family:var(--font-expr);font-size:14px;color:var(--color-ink-3);margin-left:7px;font-weight:400}
 .skill-meta{font-size:13px;color:var(--color-ink-3);font-family:var(--font-math);font-variant-numeric:tabular-nums}
 .bar{height:6px;border-radius:0;background:var(--color-rule);margin:8px 0 0;overflow:hidden}
 .bar i{display:block;height:100%;border-radius:0;background:var(--color-field)}
@@ -503,7 +507,7 @@ h1 em{font-style:normal}
 
 .mistake{padding:12px 0;border-bottom:1px solid var(--color-rule)}
 .mistake:last-child{border-bottom:0}
-.m-expr{font-family:var(--font-math);font-size:18px;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.m-expr{font-family:var(--font-expr);font-size:18px;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .m-tag{font-family:var(--font-ui);font-size:12px;letter-spacing:0;color:var(--color-ink-3);border:1px solid var(--line);background:none;border-radius:0;padding:1px 7px;font-weight:400}
 .m-line{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-bottom:4px}
 .m-bad{color:var(--color-ink-2);text-decoration:line-through;text-decoration-thickness:1px}
