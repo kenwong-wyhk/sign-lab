@@ -77,7 +77,12 @@
   --font-zh:"PingFang HK","PingFang TC","Hiragino Sans CNS","Microsoft JhengHei","Noto Sans CJK TC","Noto Sans TC",sans-serif;
 }
 @font-face{font-family:"EB Garamond";src:url("assets/fonts/eb-garamond.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"EB Garamond";src:url("assets/fonts/eb-garamond-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
 @font-face{font-family:"Archivo Narrow";src:url("assets/fonts/archivo-narrow.woff2") format("woff2");font-weight:400 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Archivo Narrow";src:url("assets/fonts/archivo-narrow-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+/* A variable is set in italic; the numerals and the operators stay roman. */
+.vx{font-style:italic}
+.zh .vx{font-family:var(--font-ui)}
 .zh{
   font-family:var(--font-zh);
   font-size:.92em;color:var(--ink-3);font-weight:400;letter-spacing:0;font-style:normal;
@@ -1798,6 +1803,45 @@ renderIntDemo('num');
   const h = (location.hash || '').replace('#', '');
   go(VIEWS.includes(h) ? h : 'home');
 })();
+
+/* ---------- a variable is set in italic ----------
+   Every lone x on the page is the variable x, so it is wrapped in <i class="vx">.
+   Words that merely contain an x (next, expand) are left alone, and the numerals
+   and operators stay roman, which is how maths is set. */
+const VX = /(^|[^A-Za-z])(x)(?![A-Za-z])/;
+function italicX(root){
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(n){
+      const p = n.parentNode;
+      if (!p || p.nodeName === 'I' || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+      return VX.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  });
+  const hits = [];
+  while (walker.nextNode()) hits.push(walker.currentNode);
+  for (const n of hits){
+    const t = n.nodeValue, frag = document.createDocumentFragment();
+    let last = 0;
+    t.replace(/(^|[^A-Za-z])(x)(?![A-Za-z])/g, (m, pre, _x, i) => {
+      if (i + pre.length > last) frag.appendChild(document.createTextNode(t.slice(last, i + pre.length)));
+      const el = document.createElement('i');
+      el.className = 'vx';
+      el.textContent = 'x';
+      frag.appendChild(el);
+      last = i + m.length;
+      return m;
+    });
+    if (last < t.length) frag.appendChild(document.createTextNode(t.slice(last)));
+    n.parentNode.replaceChild(frag, n);
+  }
+}
+italicX(document.body);
+new MutationObserver((muts) => {
+  for (const m of muts){
+    if (m.type === 'characterData'){ if (m.target.parentNode) italicX(m.target.parentNode); }
+    else for (const n of m.addedNodes) if (n.nodeType === 1 && n.isConnected) italicX(n);
+  }
+}).observe(document.body, { childList:true, subtree:true, characterData:true });
 
 let rzT = null;
 window.addEventListener('resize', () => {
