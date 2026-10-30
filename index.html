@@ -402,6 +402,7 @@ h1 em{font-style:normal}
   border-radius:0;border:1px solid var(--line-2);background:var(--card);color:var(--ink);
   cursor:pointer;display:inline-flex;align-items:baseline;
   transition:transform .15s ease,border-color .15s ease,background-color .15s ease;user-select:none;
+  touch-action:none;-webkit-user-drag:none;-webkit-touch-callout:none;
 }
 .chip:hover{transform:translateY(-2px);border-color:var(--ink)}
 .chip.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--color-ink);transform:translateY(-2px)}
@@ -410,6 +411,9 @@ h1 em{font-style:normal}
 .chip .sg.pos{color:var(--pos)}
 .chip.in-c,.chip.in-x{background:var(--color-paper-2);border-color:var(--line-2);cursor:default}
 .chip.in-c:hover,.chip.in-x:hover{transform:none;border-color:var(--line-2)}
+.chip.dragging{opacity:.35}
+.chip-ghost{position:fixed;z-index:var(--z-tooltip);pointer-events:none;transition:none;
+  box-shadow:0 0 0 2px var(--color-ink);transform:translate(-50%,-50%) scale(1.06)}
 
 .buckets{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .bucket{
@@ -418,6 +422,7 @@ h1 em{font-style:normal}
 }
 .bucket.c,.bucket.x{border-color:var(--line-2);background:var(--card)}
 .bucket:hover{border-color:var(--ink);transform:none}
+.bucket.over{border-color:var(--color-ink);box-shadow:inset 0 0 0 1px var(--color-ink)}
 .bucket.shake{animation:shake .4s}
 .bucket-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:400;color:var(--ink-2)}
 .bucket-head .bcount{
@@ -1420,14 +1425,19 @@ function renderPoly(){
   });
 
   $$('#polyChips .chip').forEach(el => {
-    el.addEventListener('click', ev => { ev.stopPropagation(); selectChip(+el.dataset.i); });
+    el.addEventListener('click', ev => {
+      ev.stopPropagation();
+      if (performance.now() - dragEndedAt < 300) return;  /* the drop already handled it */
+      selectChip(+el.dataset.i);
+    });
+    el.addEventListener('pointerdown', ev => dragBegin(ev, el));
   });
 
   $('#polyAnswer').hidden = POLY.step === 'sort';
   if (!POLY.tipLock){
     $('#polyTip').style.color = '';
     $('#polyTip').textContent = POLY.step === 'sort'
-      ? 'Tap a term, then tap the basket it belongs in. The sign travels with the term.'
+      ? 'Drag a term into a basket, or tap a term and then tap a basket. The sign travels with the term.'
       : 'Sorted. Now look only at the terms inside each basket.';
   }
 }
@@ -1475,6 +1485,73 @@ function placeChip(kind){
   }
   renderPoly();
 }
+
+/* ---------- drag a term into a basket ----------
+   Pointer Events, so a finger, a mouse and a pen all take one path. A tap still
+   selects a term and a tap on a basket still places it, which is the
+   single-pointer alternative WCAG 2.5.7 asks for; the baskets also answer Enter
+   and Space, so the keyboard can do everything the pointer can.
+
+   renderPoly() rebuilds the chips on every change, so the thing under the
+   finger is a ghost cloned onto <body>, not the chip itself. */
+const DRAG = { id:null, i:null, chip:null, ghost:null, over:null, sx:0, sy:0, live:false };
+const DRAG_SLOP = 6;
+let dragEndedAt = 0;
+
+function dragBegin(ev, chip){
+  if (ev.button !== 0 || !ev.isPrimary) return;
+  const i = +chip.dataset.i;
+  if (POLY.step !== 'sort' || POLY.placed[i] !== undefined) return;
+  DRAG.id = ev.pointerId; DRAG.i = i; DRAG.chip = chip;
+  DRAG.sx = ev.clientX; DRAG.sy = ev.clientY;
+  DRAG.live = false; DRAG.ghost = null; DRAG.over = null;
+  try { chip.setPointerCapture(ev.pointerId); } catch(e) {}
+}
+
+function dragMove(ev){
+  if (ev.pointerId !== DRAG.id || DRAG.chip === null) return;
+  if (!DRAG.live){
+    if (Math.abs(ev.clientX - DRAG.sx) < DRAG_SLOP && Math.abs(ev.clientY - DRAG.sy) < DRAG_SLOP) return;
+    DRAG.live = true;
+    const ghost = DRAG.chip.cloneNode(true);
+    ghost.classList.add('chip-ghost');
+    ghost.removeAttribute('data-i');
+    ghost.setAttribute('tabindex', '-1');
+    ghost.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(ghost);
+    DRAG.ghost = ghost;
+    DRAG.chip.classList.add('dragging');
+    POLY.sel = DRAG.i;
+  }
+  ev.preventDefault();
+  DRAG.ghost.style.left = ev.clientX + 'px';
+  DRAG.ghost.style.top = ev.clientY + 'px';
+  const under = document.elementFromPoint(ev.clientX, ev.clientY);
+  const bucket = under && under.closest ? under.closest('.bucket') : null;
+  if (bucket !== DRAG.over){
+    if (DRAG.over) DRAG.over.classList.remove('over');
+    DRAG.over = bucket;
+    if (bucket) bucket.classList.add('over');
+  }
+}
+
+function dragFinish(ev){
+  if (ev.pointerId !== DRAG.id || DRAG.chip === null) return;
+  const wasLive = DRAG.live, target = DRAG.over, chip = DRAG.chip;
+  if (DRAG.ghost) DRAG.ghost.remove();
+  chip.classList.remove('dragging');
+  if (target) target.classList.remove('over');
+  try { chip.releasePointerCapture(DRAG.id); } catch(e) {}
+  DRAG.id = null; DRAG.i = null; DRAG.chip = null; DRAG.ghost = null; DRAG.over = null; DRAG.live = false;
+  if (!wasLive) return;                 /* a tap: the click handler selects the term */
+  dragEndedAt = performance.now();
+  if (target) placeChip(target.id === 'bucket-x' ? 'x' : 'c');
+  else { POLY.sel = null; renderPoly(); }
+}
+
+document.addEventListener('pointermove', dragMove, { passive:false });
+document.addEventListener('pointerup', dragFinish);
+document.addEventListener('pointercancel', dragFinish);
 
 let tipTimer = null;
 function flashTip(msg){
