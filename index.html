@@ -691,12 +691,12 @@ h1 em{font-style:normal}
         <p class="tip" id="polyTip">Tap a term, then tap the basket it belongs in. The sign travels with the term.</p>
         <div class="chips" id="polyChips"></div>
         <div class="buckets" id="polyArea">
-          <div class="bucket c" id="bucket-c" role="button" tabindex="0">
-            <div class="bucket-head"><span class="dot c"></span><span>Constant terms <span class="zh">（常數項）</span></span><span class="bcount">0</span></div>
-            <div class="bucket-body"><span class="bucket-empty">Drop here</span></div>
-          </div>
           <div class="bucket x" id="bucket-x" role="button" tabindex="0">
             <div class="bucket-head"><span class="dot x"></span><span>Terms with x <span class="zh">（含 x 的項）</span></span><span class="bcount">0</span></div>
+            <div class="bucket-body"><span class="bucket-empty">Drop here</span></div>
+          </div>
+          <div class="bucket c" id="bucket-c" role="button" tabindex="0">
+            <div class="bucket-head"><span class="dot c"></span><span>Constant terms <span class="zh">（常數項）</span></span><span class="bcount">0</span></div>
             <div class="bucket-body"><span class="bucket-empty">Drop here</span></div>
           </div>
         </div>
@@ -1585,8 +1585,8 @@ function renderPolySol(){
   $('#polySol').hidden = false;
   $('#polySol').innerHTML =
     '<div class="sol-h">Full working</div>' +
-    '<div class="sol-row"><span class="dot c"></span><span class="sol-k">Constants</span><span class="sol-e">' + sumStr(cs) + ' = <b>' + num(p.cSum) + '</b></span></div>' +
     '<div class="sol-row"><span class="dot x"></span><span class="sol-k">x-coefficient <span class="zh">（係數）</span></span><span class="sol-e">' + sumStr(xs) + ' = <b>' + num(p.kSum) + '</b> → ' + kTxt + '</span></div>' +
+    '<div class="sol-row"><span class="dot c"></span><span class="sol-k">Constants</span><span class="sol-e">' + sumStr(cs) + ' = <b>' + num(p.cSum) + '</b></span></div>' +
     '<div class="sol-final">' + exprStr(p.terms) + ' = <b>' + polyStr(p.kSum, p.cSum) + '</b></div>';
 }
 
