@@ -1843,7 +1843,11 @@ italicX(document.body);
 new MutationObserver((muts) => {
   for (const m of muts){
     if (m.type === 'characterData'){ if (m.target.parentNode) italicX(m.target.parentNode); }
-    else for (const n of m.addedNodes) if (n.nodeType === 1 && n.isConnected) italicX(n);
+    else for (const n of m.addedNodes){
+      /* textContent= hands us a bare text node, so the walk starts at its parent */
+      if (n.nodeType === 1 && n.isConnected) italicX(n);
+      else if (n.nodeType === 3 && n.parentNode) italicX(n.parentNode);
+    }
   }
 }).observe(document.body, { childList:true, subtree:true, characterData:true });
 
